@@ -3,3 +3,40 @@ import datetime
 import pandas as pd
 import tkinter as tk
 import os
+from ipywidgets import Text, Button, VBox, HBox, Label, Output
+from IPython.display import display
+
+# Create input widgets
+task_label = Label("Task Description:")
+task_entry = Text()
+
+time_label = Label("Schedule Time:")
+time_entry = Text()
+
+# Create an output widget to display results
+output_area = Output()
+
+# Create a button
+submit_button = Button(description="Add Schedule")
+
+# Function to handle button click
+def on_submit_button_clicked(b):
+    with output_area:
+        task = task_entry.value
+        time = time_entry.value
+        print(f"Task: {task}, Time: {time}")
+        # Here you would add code to store or process the data
+
+# Link the button click to the function
+submit_button.on_click(on_submit_button_clicked)
+
+# Arrange widgets using VBox and HBox
+input_form = VBox([
+    HBox([task_label, task_entry]),
+    HBox([time_label, time_entry]),
+    submit_button,
+    output_area
+])
+
+# Display the form
+display(input_form)
