@@ -40,3 +40,6 @@ input_form = VBox([
 
 # Display the form
 display(input_form)
+#creating a dataframe
+df=pd.DataFrame(columns=['Task','Time'])
+print(df)
