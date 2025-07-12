@@ -1,0 +1,128 @@
+#generating a model for my dementia caregivers chatbot
+#importing necessary libraries
+import pandas as pd
+#sample data:conversation data
+data=pd.read_csv('Conversation_data.csv')
+#create a dataframe
+df = pd.DataFrame(data)
+#importing necessary libraries
+import pandas as pd
+import string
+from transformers import AutoTokenizer
+
+# Load a pre-trained tokenizer from Hugging Face
+# You can choose a tokenizer that matches the model you plan to use later
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+
+# sample text preprocessing function
+def preprocess_text_hf(text):
+    if isinstance(text, str):  # Ensure the input is a string
+        # converting to lowercase
+        text = text.lower()
+        # removing punctuation
+        text = text.translate(str.maketrans("", "", string.punctuation))
+        # Tokenize using Hugging Face tokenizer
+        # The output is a list of token IDs, we want the actual tokens
+        tokens = tokenizer.tokenize(text)
+        # You might want to add stop word removal and lemmatization here
+        # but let's start with basic tokenization for now
+
+        return " ".join(tokens)  # Joining tokens
+
+    else:
+        return ""  # Return empty string for non-string inputs like NaN
+
+
+# apply preprocessing to the dataframe
+# Make sure the column name is correct based on your DataFrame
+df["cleaned_review"] = df[
+    "Supplementary Appendix 2: Table 1 Characteristics, availability and MARS scores of dementia apps (N=75)"
+].apply(preprocess_text_hf)
+print(
+    df[[
+        "Supplementary Appendix 2: Table 1 Characteristics, availability and MARS scores of dementia apps (N=75)",
+        "cleaned_review",
+    ]]
+)
+#model selection
+#importing necessary libraries
+import huggingface_hub
+from transformers import pipeline
+
+# Choose a pre-trained model for text classification
+# You can explore the Hugging Face Hub for models that fit your needs
+# For example, 'distilbert-base-uncased-finetuned-sst-2-english' is good for sentiment analysis
+classifier = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english")
+
+# Sample text input
+text = "I am feeling overwhelmed with caring for my parent with dementia."
+
+# Use the model to classify the text
+result = classifier(text)
+
+# Print the result
+print(result)
+# Install necessary libraries
+!pip install transformers torch   
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
+
+# --- Sentiment Analysis (Text Classification) ---
+# Load a pre-trained model and tokenizer for sentiment analysis
+sentiment_model_name = "distilbert-base-uncased-finetuned-sst-2-english"
+sentiment_tokenizer = AutoTokenizer.from_pretrained(sentiment_model_name)
+sentiment_model = AutoModelForSequenceClassification.from_pretrained(sentiment_model_name)
+
+print(f"Loaded model and tokenizer for Sentiment Analysis: {sentiment_model_name}")
+
+# Example usage (optional, just to show it works)
+# sentiment_pipeline = pipeline("sentiment-analysis", model=sentiment_model, tokenizer=sentiment_tokenizer)
+# result = sentiment_pipeline("I am feeling very happy today.")
+# print(f"Sentiment analysis example result: {result}")
+from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
+
+# --- Question Answering ---
+# Load a pre-trained model and tokenizer for Question Answering
+qa_model_name = "distilbert-base-uncased-distilled-squad" # A common QA model
+qa_tokenizer = AutoTokenizer.from_pretrained(qa_model_name)
+qa_model = AutoModelForQuestionAnswering.from_pretrained(qa_model_name)
+
+print(f"Loaded model and tokenizer for Question Answering: {qa_model_name}")
+
+# Example usage (optional)
+# qa_pipeline = pipeline("question-answering", model=qa_model, tokenizer=qa_tokenizer)
+# context = "Hugging Face is a company that provides open-source NLP tools."
+# question = "What does Hugging Face provide?"
+# result = qa_pipeline(question=question, context=context)
+# print(f"Question Answering example result: {result}")
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# --- Text Generation ---
+# Load a pre-trained model and tokenizer for Text Generation
+# GPT-2 is a popular choice for text generation
+textgen_model_name = "gpt2"
+textgen_tokenizer = AutoTokenizer.from_pretrained(textgen_model_name)
+textgen_model = AutoModelForCausalLM.from_pretrained(textgen_model_name)
+
+print(f"Loaded model and tokenizer for Text Generation: {textgen_model_name}")
+
+# Example usage (optional)
+# from transformers import set_seed
+# set_seed(42)
+# generated_text = textgen_tokenizer.decode(textgen_model.generate(textgen_tokenizer.encode("Dementia caregiving is challenging because", return_tensors="pt"), max_length=50)[0])
+# print(f"Text Generation example result: {generated_text}")
+from transformers import AutoModelForTokenClassification, AutoTokenizer, pipeline
+
+# --- Sequence Tagging (Named Entity Recognition) ---
+# Load a pre-trained model and tokenizer for Token Classification (like NER)
+ner_model_name = "dslim/bert-base-NER" # A common NER model
+ner_tokenizer = AutoTokenizer.from_pretrained(ner_model_name)
+ner_model = AutoModelForTokenClassification.from_pretrained(ner_model_name)
+
+print(f"Loaded model and tokenizer for Sequence Tagging (NER): {ner_model_name}")
+
+# Example usage (optional)
+# ner_pipeline = pipeline("ner", model=ner_model, tokenizer=ner_tokenizer)
+# text = "John Doe is a caregiver for his mother Jane Smith who has Alzheimer's disease."
+# result = ner_pipeline(text)
+# print(f"Sequence Tagging (NER) example result: {result}")
